@@ -22,21 +22,21 @@ function Calendar({ onSelectDate }) {
   return (
     <div className="mb-6">
       <div className="flex justify-between items-center mb-2">
-        <button onClick={handlePrev} className="text-blue-500">&lt;</button>
+        <button onClick={handlePrev} className="text-blue-600 hover:text-blue-800">&lt;</button>
         <h2 className="text-lg font-semibold">{currentMonth.format('YYYY년 MM월')}</h2>
-        <button onClick={handleNext} className="text-blue-500">&gt;</button>
+        <button onClick={handleNext} className="text-blue-600 hover:text-blue-800">&gt;</button>
       </div>
-      <div className="grid grid-cols-7 text-center font-medium">
+      <div className="grid grid-cols-7 text-center font-medium select-none">
         {['일', '월', '화', '수', '목', '금', '토'].map((d) => (
-          <div key={d}>{d}</div>
+          <div key={d} className="py-1 border-b border-gray-300">{d}</div>
         ))}
       </div>
-      <div className="grid grid-cols-7 text-center mt-2">
+      <div className="grid grid-cols-7 text-center mt-2 gap-1">
         {days.map((day) => (
           <div
             key={day.format('YYYY-MM-DD')}
             onClick={() => onSelectDate(day.format('YYYY-MM-DD'))}
-            className={`p-2 border text-sm hover:bg-blue-100 cursor-pointer ${
+            className={`p-2 rounded cursor-pointer hover:bg-blue-200 ${
               day.format('MM') !== currentMonth.format('MM') ? 'text-gray-400' : ''
             }`}
           >

@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
+import './index.css'; // CSS 불러오기
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
