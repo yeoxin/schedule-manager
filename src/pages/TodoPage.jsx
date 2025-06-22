@@ -1,8 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function TodoPage() {
-  const [tasks, setTasks] = useState([]);
+  const [tasks, setTasks] = useState(() => {
+    const saved = localStorage.getItem('tasks');
+    return saved ? JSON.parse(saved) : [];
+  });
   const [taskInput, setTaskInput] = useState('');
+
+  useEffect(() => {
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+  }, [tasks]);
 
   const addTask = () => {
     if (taskInput.trim() === '') return;
@@ -11,9 +18,11 @@ function TodoPage() {
   };
 
   const toggleDone = (index) => {
-    setTasks(tasks.map((task, i) =>
-      i === index ? { ...task, done: !task.done } : task
-    ));
+    setTasks(
+      tasks.map((task, i) =>
+        i === index ? { ...task, done: !task.done } : task
+      )
+    );
   };
 
   const deleteTask = (index) => {
@@ -40,7 +49,9 @@ function TodoPage() {
       </div>
 
       <ul className="space-y-2 max-h-[400px] overflow-auto">
-        {tasks.length === 0 && <p className="text-center text-gray-400">할 일이 없습니다.</p>}
+        {tasks.length === 0 && (
+          <p className="text-center text-gray-400">할 일이 없습니다.</p>
+        )}
         {tasks.map((task, index) => (
           <li
             key={index}

@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import dayjs from 'dayjs';
 
-function Calendar({ onSelectDate }) {
+function Calendar({ onSelectDate, schedules = [] }) {
   const today = dayjs();
   const [currentMonth, setCurrentMonth] = useState(today);
 
   const startDay = currentMonth.startOf('month').startOf('week');
   const endDay = currentMonth.endOf('month').endOf('week');
+
+  const hasSchedule = (dateStr) =>
+    schedules.some(s => s.date === dateStr);
 
   const days = [];
   let date = startDay;
@@ -32,17 +35,23 @@ function Calendar({ onSelectDate }) {
         ))}
       </div>
       <div className="grid grid-cols-7 text-center mt-2 gap-1">
-        {days.map((day) => (
-          <div
-            key={day.format('YYYY-MM-DD')}
-            onClick={() => onSelectDate(day.format('YYYY-MM-DD'))}
-            className={`p-2 rounded cursor-pointer hover:bg-blue-200 ${
-              day.format('MM') !== currentMonth.format('MM') ? 'text-gray-400' : ''
-            }`}
-          >
-            {day.format('D')}
-          </div>
-        ))}
+        {days.map((day) => {
+          const dateStr = day.format('YYYY-MM-DD');
+          return (
+            <div
+              key={dateStr}
+              onClick={() => onSelectDate(dateStr)}
+              className={`relative p-2 rounded cursor-pointer hover:bg-blue-200 ${
+                day.format('MM') !== currentMonth.format('MM') ? 'text-gray-400' : ''
+              }`}
+            >
+              {day.format('D')}
+              {hasSchedule(dateStr) && (
+                <span className="absolute top-1 right-1 w-2 h-2 bg-blue-600 rounded-full"></span>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

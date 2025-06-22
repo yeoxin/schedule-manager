@@ -1,17 +1,26 @@
+import { useState, useEffect } from 'react';
 import Calendar from '../components/Calendar';
 import ScheduleForm from '../components/ScheduleForm';
-import { useState } from 'react';
 import { getCategoryColor } from '../utils/colorMap';
 
 function CalendarPage() {
-  const [schedules, setSchedules] = useState([]);
+  const [schedules, setSchedules] = useState(() => {
+    const saved = localStorage.getItem('schedules');
+    return saved ? JSON.parse(saved) : [];
+  });
   const [selectedDate, setSelectedDate] = useState('');
   const [editingSchedule, setEditingSchedule] = useState(null);
+
+  useEffect(() => {
+    localStorage.setItem('schedules', JSON.stringify(schedules));
+  }, [schedules]);
 
   const handleAdd = (newSchedule) => {
     if (editingSchedule) {
       setSchedules(
-        schedules.map((s) => (s.id === editingSchedule.id ? { ...newSchedule, id: editingSchedule.id } : s))
+        schedules.map((s) =>
+          s.id === editingSchedule.id ? { ...newSchedule, id: editingSchedule.id } : s
+        )
       );
       setEditingSchedule(null);
     } else {
@@ -20,7 +29,7 @@ function CalendarPage() {
   };
 
   const handleDelete = (id) => {
-    setSchedules(schedules.filter(item => item.id !== id));
+    setSchedules(schedules.filter((item) => item.id !== id));
     if (editingSchedule && editingSchedule.id === id) {
       setEditingSchedule(null);
     }
@@ -38,7 +47,7 @@ function CalendarPage() {
   return (
     <>
       <h1 className="text-3xl font-bold mb-4 text-center">일정 관리 시스템</h1>
-      <Calendar onSelectDate={(date) => setSelectedDate(date)} />
+      <Calendar onSelectDate={(date) => setSelectedDate(date)} schedules={schedules} />
 
       <ScheduleForm
         onAdd={handleAdd}
@@ -47,9 +56,7 @@ function CalendarPage() {
       />
 
       {selectedDate && (
-        <p className="text-center text-sm text-gray-600 mb-2">
-          📅 {selectedDate} 일정 보기
-        </p>
+        <p className="text-center text-sm text-gray-600 mb-2">📅 {selectedDate} 일정 보기</p>
       )}
 
       <div className="space-y-3 max-h-[300px] overflow-auto">
@@ -67,8 +74,13 @@ function CalendarPage() {
             }}
           >
             <div>
-              <div className="font-semibold">{item.title} <span className="text-sm text-gray-600">({item.category})</span></div>
-              <div className="text-sm text-gray-700">{item.date} {item.time}</div>
+              <div className="font-semibold">
+                {item.title}{' '}
+                <span className="text-sm text-gray-600">({item.category})</span>
+              </div>
+              <div className="text-sm text-gray-700">
+                {item.date} {item.time}
+              </div>
             </div>
             <div className="flex gap-3">
               <button
